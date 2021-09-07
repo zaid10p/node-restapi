@@ -8,6 +8,9 @@ const multer = require("multer");
 const feedRoutes = require("./routes/feed");
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
+const { graphqlHTTP } = require("express-graphql");
+const graphqlSchema = require("./grapghql/schemas");
+const grapgqlResolver = require("./grapghql/resolvers");
 
 const app = express();
 
@@ -46,6 +49,9 @@ app.use((req, res, next) => {
     "OPTIONS, GET, POST, PUT, PATCH, DELETE"
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method == "OPTIONS") {
+    return res.sendStatus(200);
+  }
   next();
 });
 
@@ -53,6 +59,17 @@ app.use("/feed", feedRoutes);
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 
+//graphl
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema: graphqlSchema,
+    rootValue: grapgqlResolver,
+    graphiql: true,
+  })
+);
+
+//error handling middle ware
 app.use((error, req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
