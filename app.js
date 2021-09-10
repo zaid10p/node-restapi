@@ -57,7 +57,7 @@ app.use((req, res, next) => {
 });
 
 app.use(helmet());
-// morgan for logging
+// morgan for logging 
 
 app.use("/feed", feedRoutes);
 app.use("/auth", authRoutes);
