@@ -11,6 +11,7 @@ const userRoutes = require("./routes/user");
 const { graphqlHTTP } = require("express-graphql");
 const graphqlSchema = require("./grapghql/schemas");
 const grapgqlResolver = require("./grapghql/resolvers");
+const helmet = require("helmet");
 
 const app = express();
 
@@ -55,6 +56,9 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(helmet());
+// morgan for logging
+
 app.use("/feed", feedRoutes);
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
@@ -85,7 +89,8 @@ mongoose
     useFindAndModify: false,
   })
   .then((result) => {
-    console.log("Database connected");
-    app.listen(8080);
+    const port = process.env.PORT || 8080;
+    console.log("Database connected : port ", port);
+    app.listen(port);
   })
   .catch((err) => console.log(err));
